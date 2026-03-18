@@ -6,6 +6,36 @@ import csv
 import time
 
 # ── Connection ──────────────────────────────────────────────────────────────
+def connect_lan(usb_address=None):
+    """
+    Connect to Keysight oscilloscope over USB.
+    
+    Parameters:
+        usb_address : optional VISA resource string e.g. 'USB0::0x0957::0x1796::MY12345678::INSTR'
+                      if None, will auto-detect the first USB instrument found
+    
+    Returns:
+        scope : pyvisa resource object
+    """
+    rm = pyvisa.ResourceManager()
+
+    if usb_address is None:
+        # Auto-detect first USB instrument
+        resources = rm.list_resources('USB?*')
+        if len(resources) == 0:
+            raise RuntimeError("No USB instruments found")
+        usb_address = resources[0]
+        print(f"Auto-detected: {usb_address}")
+
+    scope = rm.open_resource(usb_address)
+    scope.timeout = 10000
+    scope.write_termination = '\n'
+    scope.read_termination = '\n'
+
+    idn = scope.query('*IDN?')
+    print(f"Connected to: {idn}")
+
+    return scope
 
 def connect(ip_address):
     """
