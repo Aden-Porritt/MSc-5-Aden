@@ -111,8 +111,8 @@ def foo(x, I, c, a, fsr, x0):
     p = np.sqrt(1 - c) * np.sqrt(1 - a)
     return I * (1 - c) + (I * c ** 2 - 2 * I * c * np.sqrt(1 - c) * (1 - p * np.cos(2 * np.pi * x))) / (1 - 2 * p * np.cos(2 * np.pi * x) + p ** 2)
 
-# time, data = read_file("C:/Users/adenp/Desktop/5/code/g_072_1_1.csv")
-time, data = read_file("C:/Users/adenp/Desktop/5/code/g_082_1_1.csv")
+# time, data = read_file("C:/Users/adenp/Desktop/MSc 5 Aden/code/g_072_1_1.csv")
+time, data = read_file("C:/Users/adenp/Desktop/MSc 5 Aden/code/g_082_1_1.csv")
 
 print("data length", len(data))
 
@@ -174,8 +174,8 @@ plt.plot([i / len(data) for i in range(len(data))], data)
 plt.scatter(np.array(peak_indexs) / len(data), [data[i] for i in peak_indexs], c="red")
 
 
-time, data = read_file("C:/Users/adenp/Desktop/5/code/g_082_1_4.csv")
-# time, data = read_file("C:/Users/adenp/Desktop/5/code/g_2_72_3.csv")
+time, data = read_file("C:/Users/adenp/Desktop/MSc 5 Aden/code/g_082_1_4.csv")
+# time, data = read_file("C:/Users/adenp/Desktop/MSc 5 Aden/code/g_2_72_3.csv")
 
 x = np.linspace(0, 1, len(data))
 
