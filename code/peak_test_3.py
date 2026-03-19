@@ -5,24 +5,43 @@ from scipy.optimize import curve_fit
 from scipy.optimize import brentq
 
 
+def read_file(file_name):
+
+    data = np.loadtxt(file_name, skiprows=2, delimiter=',')
+    
+    time = data[:, 0]
+    voltage = data[:, 1]
+    
+    return time, voltage
+
 def ring_out_put(x, I, c, a, fsr, x0):
     x = (x + x0) / fsr
     p = np.sqrt(1 - c) * np.sqrt(1 - a)
     return I * (1 - c) + (I * c ** 2 - 2 * I * c * np.sqrt(1 - c) * (1 - p * np.cos(2 * np.pi * x))) / (1 - 2 * p * np.cos(2 * np.pi * x) + p ** 2)
 
+def finesse(c, a):
+    p = np.sqrt(1 - c) * np.sqrt(1 - a)
+    return np.pi * p / (1 - p)
 
-x = np.linspace(0, 1, 10000)
+time, data = read_file("C:/Users/adenp/Desktop/MSc 5 Aden/code/3_peak_test.csv")
 
-y = ring_out_put(x, 1, 0.005, 0.001, 50, -0.5)
-y += ring_out_put(x, 0.2, 0.005, 0.001, 50, -0.25)
-y += ring_out_put(x, 0.2, 0.005, 0.001, 50, -0.75)
+plt.plot(data)
+plt.show()
 
-# noise
-y += np.random.normal(0, 0.01, size=y.shape)
+x = np.linspace(0, 1, len(data))
+
+# y = ring_out_put(x, 1, 0.005, 0.001, 50, -0.5)
+# y += ring_out_put(x, 0.2, 0.005, 0.001, 50, -0.25)
+# y += ring_out_put(x, 0.2, 0.005, 0.001, 50, -0.75)
+
+# # noise
+# y += np.random.normal(0, 0.01, size=y.shape)
 
 
 # plt.plot(x, y)
 # plt.show()
+
+y = data
 
 def find_peaks(data):
     data = np.array(data)
@@ -47,14 +66,29 @@ print(peaks_index)
 d_peak = peaks_index[2] - peaks_index[0]
 print(d_peak)
 
-freq_peaks = 100 * 10 ** 9
+freq_peaks = 5* 10 ** 9 * 2
 
 df = freq_peaks / d_peak
 print("df", df)
 
 x = np.arange(len(y)) * df
 
+def rind_fsr_fixed(x, I, c, a, x0):
+    fsr = 3.75 * 10 ** 12
+    return ring_out_put(x, I, c, a, fsr, x0)
+
+bounds = (
+    [ 0,      0,    0,    -x[peaks_index[1]] * 1.01],
+    [10,   0.99, 0.99, -x[peaks_index[1]] * 0.99   ]
+    )
+
+popt, pcov = curve_fit(rind_fsr_fixed, x, y, p0=[1, 0.005, 0.001, -x[peaks_index[1]]], bounds=bounds, maxfev=10000)
+print(popt)
+print("finesse", finesse(popt[1], popt[2]))
+
 plt.plot(x, y)
+plt.plot(x, rind_fsr_fixed(x, *popt), c="red")
+plt.scatter([x[i] for i in peaks_index], [y[i] for i in peaks_index], c="red")
 plt.show()
 
 
