@@ -3,6 +3,7 @@ import matplotlib.pyplot as plt
 
 from scipy.optimize import curve_fit
 from scipy.optimize import brentq
+import oscilloscope as osc
 
 
 def read_file(file_name):
@@ -23,9 +24,11 @@ def finesse(c, a):
     p = np.sqrt(1 - c) * np.sqrt(1 - a)
     return np.pi * p / (1 - p)
 
-time, data = read_file("C:/Users/adenp/Desktop/MSc 5 Aden/code/3_peak_test.csv")
+# time, data = read_file("C:/Users/adenp/Desktop/MSc 5 Aden/code/3_peak_test.csv")
+time, data = osc.read_waveform(osc.connect(), 2)
 
-plt.plot(data)
+
+plt.plot(time, data)
 plt.show()
 
 x = np.linspace(0, 1, len(data))
@@ -66,7 +69,7 @@ print(peaks_index)
 d_peak = peaks_index[2] - peaks_index[0]
 print(d_peak)
 
-freq_peaks = 5* 10 ** 9 * 2
+freq_peaks = 5 * 10 ** 9 * 2
 
 df = freq_peaks / d_peak
 print("df", df)

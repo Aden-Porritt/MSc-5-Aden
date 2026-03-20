@@ -131,8 +131,8 @@ def read_waveform(scope, channel=1):
     values = np.array([float(v) for v in raw.split(',')])
 
     # Apply scaling
-    voltage = (values - y_reference) * y_increment + y_origin
-    time_arr = x_origin + np.arange(len(voltage)) * x_increment
+    voltage = values
+    time_arr = np.arange(len(voltage)) * x_increment
 
     print(f"Read {len(voltage)} points from CH{channel}")
 
@@ -183,7 +183,8 @@ if __name__ == '__main__':
     TIME_SCALE   = 1e-3             # 1 ms/div
     VOLTAGE_SCALE = 0.1             # 100 mV/div
 
-    scope = connect(IP_ADDRESS)
+    # scope = connect(IP_ADDRESS)
+    scope = connect_lan()  # auto-detect USB
     # setup(scope, CHANNEL, TIME_SCALE, VOLTAGE_SCALE)
 
     time_arr, voltage = read_waveform(scope, CHANNEL)
